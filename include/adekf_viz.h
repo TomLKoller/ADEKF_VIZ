@@ -7,8 +7,6 @@
 
 #include "PoseRenderer.h"
 #include "HeatMap.h"
-#include "LinePlot.h"
-#include <thread>
 #include <memory>
 #include <QApplication>
 
@@ -22,18 +20,11 @@ namespace adekf::viz {
      * @param argc the argc argument of the main function
      * @param argv the argv argument of the main function
      */
-    void initGuis(int &argc, char *argv[]) {
-        qwidget = std::make_shared<QApplication>(argc, argv);
-        PoseRenderer::initGui();
-    }
+    void initGuis(int &argc, char *argv[]) ;
     /**
      * Disposes all GUIs and frees memory (2D and 3D)
      */
-    void finishGuis() {
-        PoseRenderer::disposeWindow();
-        HeatMap::disposePlots();
-        LinePlot::disposePlots();
-    }
+    void finishGuis() ;
     /**
      * Runs all GUIs (2D and 3D)
      *
@@ -41,18 +32,7 @@ namespace adekf::viz {
      * Also calls finishGuis() when the 3D window is closed.
      * @see finishGuis
      */
-    void runGuis() {
-        LOG_STREAM << "Starting GUIs" LOG_END
-        while (!PoseRenderer::isDone()) {
-            PoseRenderer::updateWindow();
-            HeatMap::updatePlots();
-            LinePlot::ioService.poll();
-            LinePlot::updatePlots();
-            qwidget->processEvents();
-// std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-        finishGuis();
-    }
+    void runGuis() ;
 
     /**
      * Plots the given vector in a line graph.
@@ -67,9 +47,7 @@ namespace adekf::viz {
      * @param legend The legend entries of the vector axis. requires a char for each dimension of the vector
      * @param stride Only each strideth vector is shown
      */
-    void plotVector(const Eigen::VectorXd &vector, const char *title, size_t buffer_size, const char *legend) {
-        LinePlot::plotVector(vector, title, buffer_size, legend);
-    }
+    void plotVector(const Eigen::VectorXd &vector, const char *title, size_t buffer_size, const char *legend, size_t stride=1) ;
 
     /**
      * Display the covariance of the given estimator
