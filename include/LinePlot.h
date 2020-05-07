@@ -11,7 +11,6 @@
 #include "jkqtplotter/jkqtplotter.h"
 #include "jkqtplotter/graphs/jkqtpscatter.h"
 #include <functional>
-#include <ADEKF/ADEKFUtils.h>
 
 #include <boost/asio/io_service.hpp>
 #include <memory>

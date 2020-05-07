@@ -22,10 +22,10 @@
 #include <vtkAnimationCue.h>
 
 #include <list>
-#include <ADEKF/types/SO3.h>
 #include <memory>
 #include <chrono>
 #include <thread>
+#include <Eigen/Geometry>
 
 namespace adekf::viz {
     /**

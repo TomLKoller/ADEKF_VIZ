@@ -15,7 +15,6 @@ namespace adekf::viz{
         LinePlot::disposePlots();
     }
     void runGuis() {
-        LOG_STREAM << "Starting GUIs" LOG_END
         while (!PoseRenderer::isDone()) {
             PoseRenderer::updateWindow();
             HeatMap::updatePlots();

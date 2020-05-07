@@ -51,11 +51,7 @@ endif()
 message (STATUS "VTK_VERSION: ${VTK_VERSION}")
 
 # include all components
-target_link_libraries(${PROJECT_NAME} PUBLIC ${VTK_LIBRARIES} ${Boost_LIBRARIES}  ADEKF ${CMAKE_THREAD_LIBS_INIT}  Qt5::Core Qt5::Widgets Qt5::Gui Qt5::PrintSupport Qt5::Svg Qt5::Xml JKQTPlotterSharedLib )
-# vtk_module_autoinit is needed
-#target_link_libraries(qplot  Qt5::Core
-#        Qt5::Gui
-#        Qt5::Widgets Qt5::PrintSupport)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${VTK_LIBRARIES} ${Boost_LIBRARIES}  ${CMAKE_THREAD_LIBS_INIT}  Qt5::Core Qt5::Widgets Qt5::Gui Qt5::PrintSupport Qt5::Svg Qt5::Xml JKQTPlotterSharedLib )
 
 target_compile_features(${PROJECT_NAME}  PUBLIC  cxx_std_17 )
 vtk_module_autoinit(
