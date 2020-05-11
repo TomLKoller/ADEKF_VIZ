@@ -269,7 +269,21 @@ namespace adekf::viz {
         }
 
 
+        /**
+         * Displays the given path with connected lines
+         * @param path the path to visualize
+         * @param color of the line
+         */
+        static void displayPath(const std::vector<Eigen::Vector3d> & path, const char *color);
 
+
+        /**
+         * Displays the given points
+         * @param displayed_points The points to display
+         * @param color of the line
+         * @param sphere_radius radius of the displayed points
+         */
+        static void displayPoints(const std::vector<Eigen::Vector3d> &  displayed_points,const char *color, double sphere_radius);
 
     };
 

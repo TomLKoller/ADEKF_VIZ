@@ -4,6 +4,10 @@
 
 #include "PoseRenderer.h"
 
+#include <vtkLine.h>
+#include <vtkGlyph3D.h>
+#include <vtkSphereSource.h>
+
 namespace adekf::viz{
 
      vtkSmartPointer<vtkActor> PoseRenderer::createActor(const char* color, double scale){
@@ -101,6 +105,87 @@ namespace adekf::viz{
             delete poseActor.first;
         }
     }
+
+    void PoseRenderer::displayPath(const std::vector<Eigen::Vector3d> &path, const char * color) {
+        vtkSmartPointer<vtkPoints> points =
+                vtkSmartPointer<vtkPoints>::New();
+        for(Eigen::Vector3d vector: path){
+            points->InsertNextPoint(vector.data());
+        }
+        vtkSmartPointer<vtkCellArray> lines =
+                vtkSmartPointer<vtkCellArray>::New();
+
+        for(unsigned int i = 0; i < path.size(); i++)
+        {
+            vtkSmartPointer<vtkLine> line =
+                    vtkSmartPointer<vtkLine>::New();
+            line->GetPointIds()->SetId(0,i);
+            line->GetPointIds()->SetId(1,i+1);
+            lines->InsertNextCell(line);
+        }
+
+        // Create a polydata to store everything in
+        vtkSmartPointer<vtkPolyData> linesPolyData =
+                vtkSmartPointer<vtkPolyData>::New();
+
+        // Add the points to the dataset
+        linesPolyData->SetPoints(points);
+
+        // Add the lines to the dataset
+        linesPolyData->SetLines(lines);
+
+        // Setup actor and mapper
+        vtkSmartPointer<vtkNamedColors> colors =
+                vtkSmartPointer<vtkNamedColors>::New();
+
+        vtkSmartPointer<vtkPolyDataMapper> mapper =
+                vtkSmartPointer<vtkPolyDataMapper>::New();
+        mapper->SetInputData(linesPolyData);
+
+        vtkSmartPointer<vtkActor> actor =
+                vtkSmartPointer<vtkActor>::New();
+        actor->SetMapper(mapper);
+        actor->GetProperty()->SetLineWidth(4);
+        actor->GetProperty()->SetColor(colors->GetColor3d(color).GetData());
+        renderer->AddActor(actor);
+
+    }
+
+
+    void PoseRenderer::displayPoints(const std::vector<Eigen::Vector3d> &displayed_points,const char *color, double sphere_radius) {
+        vtkSmartPointer<vtkPoints> points =
+                vtkSmartPointer<vtkPoints>::New();
+        for(Eigen::Vector3d vector: displayed_points){
+            points->InsertNextPoint(vector.data());
+        }
+        vtkSmartPointer<vtkPolyData> polydata =
+                vtkSmartPointer<vtkPolyData>::New();
+        polydata->SetPoints(points);
+
+        // Create anything you want here, we will use a cube for the demo.
+        vtkSmartPointer<vtkSphereSource> sphereSource =
+                vtkSmartPointer<vtkSphereSource>::New();
+        sphereSource->SetRadius(sphere_radius);
+
+        vtkSmartPointer<vtkGlyph3D> glyph3D =
+                vtkSmartPointer<vtkGlyph3D>::New();
+        glyph3D->SetSourceConnection(sphereSource->GetOutputPort());
+        glyph3D->SetInputData(polydata);
+        glyph3D->Update();
+
+        // Visualize
+        vtkSmartPointer<vtkPolyDataMapper> mapper =
+                vtkSmartPointer<vtkPolyDataMapper>::New();
+        mapper->SetInputConnection(glyph3D->GetOutputPort());
+
+        vtkSmartPointer<vtkActor> actor =
+                vtkSmartPointer<vtkActor>::New();
+        actor->SetMapper(mapper);
+        vtkSmartPointer<vtkNamedColors> colors =
+                vtkSmartPointer<vtkNamedColors>::New();
+        actor->GetProperty()->SetColor(colors->GetColor3d(color).GetData());
+        renderer->AddActor(actor);
+     }
 
 
 
