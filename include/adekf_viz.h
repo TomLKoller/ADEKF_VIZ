@@ -13,7 +13,7 @@
 #include <boost/asio/io_service.hpp>
 
 namespace adekf::viz {
-    inline std::shared_ptr<QApplication> qwidget;
+    inline QApplication * qwidget;
 
     /**
      * Initialize all GUIs (2D and 3D plots)

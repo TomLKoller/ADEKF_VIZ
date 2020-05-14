@@ -6,7 +6,7 @@
 #include "LinePlot.h"
 namespace adekf::viz{
     void initGuis(int &argc, char *argv[]) {
-        qwidget = std::make_shared<QApplication>(argc, argv);
+        qwidget =new QApplication(argc, argv);
         PoseRenderer::initGui();
     }
     void finishGuis() {

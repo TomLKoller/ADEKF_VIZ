@@ -3,10 +3,11 @@ project("ADEKF_VIZ" VERSION 1.0.0
                 DESCRIPTION "Automatic Differentiated Extended Kalman Filter (ADEKF) Visualization - This is a library to visualize the estimates of the ADEKF."
                 LANGUAGES CXX)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
+#set(CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTORCC ON)
+#set(CMAKE_AUTOUIC ON)
 
 
 include(GNUInstallDirs)

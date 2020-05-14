@@ -115,7 +115,7 @@ namespace adekf::viz{
         vtkSmartPointer<vtkCellArray> lines =
                 vtkSmartPointer<vtkCellArray>::New();
 
-        for(unsigned int i = 0; i < path.size(); i++)
+        for(unsigned int i = 0; i < path.size()-1; i++)
         {
             vtkSmartPointer<vtkLine> line =
                     vtkSmartPointer<vtkLine>::New();
