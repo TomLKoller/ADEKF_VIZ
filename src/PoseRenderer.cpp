@@ -30,6 +30,25 @@ namespace adekf::viz{
         renderer->AddActor(actor);
         return actor;
     }
+    void PoseRenderer::addPositionBubble(const Eigen::Vector3d& position,const char* color, double radius){
+        auto colors =
+                vtkSmartPointer<vtkNamedColors>::New();
+        // Create a sphere
+        auto sphereSource =
+                vtkSmartPointer<vtkSphereSource>::New();
+        sphereSource->SetCenter(position.x(), position.y(), position.z());
+       sphereSource->SetRadius(radius);
+        sphereSource->Update();
+        // Create a mapper and actor
+        auto mapper =
+                vtkSmartPointer<vtkPolyDataMapper>::New();
+        mapper->SetInputConnection(sphereSource->GetOutputPort());
+        auto actor =
+                vtkSmartPointer<vtkActor>::New();
+        actor->SetMapper(mapper);
+        actor->GetProperty()->SetColor(colors->GetColor3d(color).GetData());
+        renderer->AddActor(actor);
+    }
 
     bool PoseRenderer::isDone(){
         return window->GetDone();

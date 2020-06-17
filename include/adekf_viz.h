@@ -17,6 +17,10 @@ namespace adekf::viz {
 
     /**
      * Initialize all GUIs (2D and 3D plots)
+     *
+     * @Issue apparently a call to this function changes your c-locale (this may intefere with calls  atof, possibly others)
+     *  This behaviour may result in atof to use "," instead of the "." delimiter for floating point numbers
+     *
      * @param argc the argc argument of the main function
      * @param argv the argv argument of the main function
      */
@@ -98,6 +102,11 @@ namespace adekf::viz {
         PoseRenderer::displayPose(estimator, color);
     }
 
+
+    /**
+     * Color palette to choose colors from by index up to 6
+     */
+    static inline const char * colorpalette[]={"red","blue","yellow","green","violet","orange","brown"};
 
 }
 

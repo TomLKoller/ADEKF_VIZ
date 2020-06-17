@@ -29,7 +29,7 @@ namespace adekf::viz {
             buffer[i][current] = vector(i);
         }
         current++;
-        if (current > buffer_size)
+        if (current == buffer_size)
             current = current % buffer_size;
     }
 

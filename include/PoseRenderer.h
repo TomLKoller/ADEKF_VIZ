@@ -285,6 +285,16 @@ namespace adekf::viz {
          */
         static void displayPoints(const std::vector<Eigen::Vector3d> &  displayed_points,const char *color, double sphere_radius);
 
+
+        /**
+         * Add a single Position bubble to the window
+         * @param position Position of the bubble
+         * @param color  Color of the bubble
+         * @param radius  Radius of the bubble
+         */
+        static void addPositionBubble(const Eigen::Vector3d& position,const char* color, double radius);
+
+
     };
 
 }
