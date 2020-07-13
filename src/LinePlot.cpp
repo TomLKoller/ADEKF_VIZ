@@ -10,7 +10,7 @@ namespace adekf::viz {
             : buffer_size(buffer_size), current(0),  stride_counter(-1), stride(stride) {
         for (size_t i = 0; i < first_vector.rows(); i++) {
             //Create buffers and fill them with 0s
-            buffer.push_back(std::shared_ptr<double[]>((double *) calloc(buffer_size, sizeof(double))));
+            buffer.push_back(std::shared_ptr<double[]>(new double[buffer_size]));
             std::fill_n(buffer.back().get(), buffer_size, 0);
         }
         append(first_vector);
