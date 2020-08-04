@@ -125,7 +125,7 @@ namespace adekf::viz{
         }
     }
 
-    void PoseRenderer::displayPath(const std::vector<Eigen::Vector3d> &path, const char * color) {
+    void PoseRenderer::displayPath(const std::vector<Eigen::Vector3d, Eigen::aligned_allocator<Eigen::Vector3d>> &path, const char * color) {
         vtkSmartPointer<vtkPoints> points =
                 vtkSmartPointer<vtkPoints>::New();
         for(Eigen::Vector3d vector: path){
@@ -171,7 +171,7 @@ namespace adekf::viz{
     }
 
 
-    void PoseRenderer::displayPoints(const std::vector<Eigen::Vector3d> &displayed_points,const char *color, double sphere_radius) {
+    void PoseRenderer::displayPoints(const std::vector<Eigen::Vector3d, Eigen::aligned_allocator<Eigen::Vector3d>> &displayed_points,const char *color, double sphere_radius) {
         vtkSmartPointer<vtkPoints> points =
                 vtkSmartPointer<vtkPoints>::New();
         for(Eigen::Vector3d vector: displayed_points){

@@ -274,7 +274,7 @@ namespace adekf::viz {
          * @param path the path to visualize
          * @param color of the line
          */
-        static void displayPath(const std::vector<Eigen::Vector3d> & path, const char *color);
+        static void displayPath(const std::vector<Eigen::Vector3d, Eigen::aligned_allocator<Eigen::Vector3d>> & path, const char *color);
 
 
         /**
@@ -283,7 +283,7 @@ namespace adekf::viz {
          * @param color of the line
          * @param sphere_radius radius of the displayed points
          */
-        static void displayPoints(const std::vector<Eigen::Vector3d> &  displayed_points,const char *color, double sphere_radius);
+        static void displayPoints(const std::vector<Eigen::Vector3d, Eigen::aligned_allocator<Eigen::Vector3d>> &  displayed_points,const char *color, double sphere_radius);
 
 
         /**
