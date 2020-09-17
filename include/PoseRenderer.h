@@ -291,6 +291,7 @@ namespace adekf::viz {
         static vtkSmartPointer<vtkActor>  displayPoints(const std::vector<Eigen::Vector3d,Eigen::aligned_allocator<Eigen::Vector3d>> &  displayed_points,const char *color, double sphere_radius);
 
 
+
         /**
          * Add a single Position bubble to the window
          * @param position Position of the bubble
