@@ -14,18 +14,27 @@ namespace adekf::viz{
         HeatMap::disposePlots();
         LinePlot::disposePlots();
     }
+
+    void updateAll(){
+        PoseRenderer::updateWindow();
+        HeatMap::updatePlots();
+        LinePlot::ioService.poll();
+        LinePlot::ioService.reset();
+        LinePlot::updatePlots();
+        qwidget->processEvents();
+    }
     void runGuis() {
         while (!PoseRenderer::isDone()) {
-            PoseRenderer::updateWindow();
-            HeatMap::updatePlots();
-            LinePlot::ioService.poll();
-            LinePlot::updatePlots();
-            qwidget->processEvents();
+           updateAll();
         }
         finishGuis();
     }
     void plotVector(const Eigen::VectorXd &vector, const char *title, size_t buffer_size, const char *legend,size_t stride) {
         LinePlot::plotVector(vector, title, buffer_size, legend,stride);
+    }
+
+    void plotMatrix(const Eigen::MatrixXd &whole_matrix, const char *title,  const char *legend){
+        LinePlot::plotMatrix(whole_matrix,title,legend);
     }
 
 }

@@ -38,6 +38,14 @@ namespace adekf::viz {
      */
     void runGuis() ;
 
+
+    /**
+     * Runs a single update step of all GUIs
+     * Exposed for own update loop
+     * @see runGuis()
+     */
+     void updateAll();
+
     /**
      * Plots the given vector in a line graph.
      *
@@ -52,6 +60,20 @@ namespace adekf::viz {
      * @param stride Only each strideth vector is shown
      */
     void plotVector(const Eigen::VectorXd &vector, const char *title, size_t buffer_size, const char *legend, size_t stride=1) ;
+
+
+    /**
+        * Plots the given content in a line graph at once.
+        *
+        * Call this function whenever you want to plot a whole matrix at once.
+        * The title has to be unique
+        *
+        * Just passes argument to @see adekf::viz::LinePlot::plotMatrix
+        * @param whole_matrix The content to plot
+        * @param title The title of the plot. Has to be a unique identifier
+        * @param legend The legend entries of the vector axis. requires a char for each row dimension of the content
+        */
+    void plotMatrix(const Eigen::MatrixXd &whole_matrix, const char *title,  const char *legend);
 
     /**
      * Display the covariance of the given estimator

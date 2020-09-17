@@ -2,12 +2,14 @@
 // Created by tomlucas on 06.04.20.
 //
 
+
 #include "PoseRenderer.h"
 
 #include <vtkLine.h>
 #include <vtkGlyph3D.h>
 #include <vtkSphereSource.h>
 
+#define LOCK std::lock_guard<std::mutex> lockGuard(mt);
 namespace adekf::viz{
 
      vtkSmartPointer<vtkActor> PoseRenderer::createActor(const char* color, double scale){
@@ -48,7 +50,7 @@ namespace adekf::viz{
         actor->SetMapper(mapper);
         actor->GetProperty()->SetColor(colors->GetColor3d(color).GetData());
         renderer->AddActor(actor);
-    }
+     }
 
     bool PoseRenderer::isDone(){
         return window->GetDone();
@@ -98,6 +100,7 @@ namespace adekf::viz{
     }
 
     void PoseRenderer::updateWindow(){
+         LOCK
         for(auto poseActor : posesAndActors){
             auto actor= poseActor.second;
             auto pose=poseActor.first;
@@ -125,7 +128,7 @@ namespace adekf::viz{
         }
     }
 
-    void PoseRenderer::displayPath(const std::vector<Eigen::Vector3d> &path, const char * color) {
+    void PoseRenderer::displayPath(const std::vector<Eigen::Vector3d,Eigen::aligned_allocator<Eigen::Vector3d>> &path, const char * color) {
         vtkSmartPointer<vtkPoints> points =
                 vtkSmartPointer<vtkPoints>::New();
         for(Eigen::Vector3d vector: path){
@@ -171,7 +174,7 @@ namespace adekf::viz{
     }
 
 
-    void PoseRenderer::displayPoints(const std::vector<Eigen::Vector3d> &displayed_points,const char *color, double sphere_radius) {
+    vtkSmartPointer<vtkActor> PoseRenderer::displayPoints(const std::vector<Eigen::Vector3d,Eigen::aligned_allocator<Eigen::Vector3d>> &displayed_points,const char *color, double sphere_radius) {
         vtkSmartPointer<vtkPoints> points =
                 vtkSmartPointer<vtkPoints>::New();
         for(Eigen::Vector3d vector: displayed_points){
@@ -204,8 +207,14 @@ namespace adekf::viz{
                 vtkSmartPointer<vtkNamedColors>::New();
         actor->GetProperty()->SetColor(colors->GetColor3d(color).GetData());
         renderer->AddActor(actor);
+        return actor;
      }
 
+
+    void PoseRenderer::removeActor(vtkSmartPointer<vtkActor> actor){
+         LOCK
+         renderer->RemoveActor(actor);
+     }
 
 
 }

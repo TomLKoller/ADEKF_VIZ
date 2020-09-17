@@ -37,6 +37,19 @@ namespace adekf::viz {
  * @param stride only each strideth vector will be shown 1 to show all
  */
         VectorRingBuffer(size_t buffer_size, const Eigen::VectorXd &first_vector, size_t stride);
+
+/**
+ * Constructor to set whole data at once
+ * param whole_matrix the complete data to be shown
+ */
+        VectorRingBuffer(const Eigen::MatrixXd & whole_matrix);
+
+/**
+ * Sets the buffer to the content of whole_matrix
+ * @param whole_matrix the complete content to be displayed
+ */
+
+        void setBuffer(const Eigen::MatrixXd & whole_matrix);
 /**
  * Appends an vector to the buffers.
  * Splits the vector into several double buffers (required for plotting)
@@ -107,6 +120,22 @@ namespace adekf::viz {
          */
         static void plotVector(const Eigen::VectorXd &vector, const char *title, size_t buffer_size, const char *legend,
                                size_t stride = 1);
+
+
+
+        /**
+        * Plots the given content in a line graph at once.
+        *
+        * Call this function whenever you want to plot a whole matrix at once.
+        * The title has to be unique
+        * @param whole_matrix The content to plot
+        * @param title The title of the plot. Has to be a unique identifier
+        * @param legend The legend entries of the vector axis. requires a char for each row dimension of the content
+        */
+        static void plotMatrix(const Eigen::MatrixXd &whole_matrix, const char *title,  const char *legend);
+
+
+
         /**
          * Clears all plots and frees memory
          */

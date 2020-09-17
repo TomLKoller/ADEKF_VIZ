@@ -16,6 +16,22 @@ namespace adekf::viz {
         append(first_vector);
     }
 
+    VectorRingBuffer::VectorRingBuffer(const Eigen::MatrixXd & whole_matrix)
+            : buffer_size(whole_matrix.cols()), current(0),  stride_counter(-1), stride(1) {
+        for (size_t i = 0; i < whole_matrix.rows(); i++) {
+            //Create buffers and fill them with 0s
+            buffer.push_back(std::shared_ptr<double[]>(new double[buffer_size]));
+        }
+        setBuffer(whole_matrix);
+    }
+
+    void VectorRingBuffer::setBuffer(const Eigen::MatrixXd & whole_matrix){
+        for (size_t i = 0; i < whole_matrix.rows(); i++) {
+            (Eigen::Map<Eigen::VectorXd>(buffer[i].get(),whole_matrix.cols()))=whole_matrix.row(i);
+        }
+    }
+
+
     void VectorRingBuffer::append(const Eigen::VectorXd &vector) {
         //only add each strideth element
         if (stride > 1) {
@@ -47,6 +63,7 @@ namespace adekf::viz {
     }
 
     void LinePlot::createPlot(size_t size, const char *title, size_t buffer_size, const char *legend) {
+        LOG_STREAM << "Creating plot " << title LOG_END
         auto plot = std::make_shared<JKQTPlotter>();
         plots.push_front(plot);
         JKQTPDatastore *ds = plot->getDatastore();
@@ -92,6 +109,20 @@ namespace adekf::viz {
             ioService.post([=]() { createPlot(size, title, buffer_size, legend); });
         } else {
             it->second.append(vector);
+        }
+    }
+
+
+    void LinePlot::plotMatrix(const Eigen::MatrixXd &whole_matrix, const char *title,  const char *legend){
+        //Check if title already exists
+        auto it = plot_data.find(title);
+        //create new plot if not, append vector otherwise
+        if (it == plot_data.end()) {
+            plot_data.emplace(title, VectorRingBuffer(whole_matrix));
+            size_t size = whole_matrix.rows(); // to not copy vector
+            ioService.post([=]() { createPlot(size, title, whole_matrix.cols(), legend); });
+        } else {
+            it->second.setBuffer(whole_matrix);
         }
     }
 }

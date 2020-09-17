@@ -26,6 +26,7 @@
 #include <chrono>
 #include <thread>
 #include <Eigen/Geometry>
+#include <mutex>
 
 namespace adekf::viz {
     /**
@@ -144,6 +145,10 @@ namespace adekf::viz {
         inline static std::shared_ptr<PoseReader> focus;
         //The view vector of the automatic tracking
         inline static Eigen::Vector3d view_vector;
+
+        //Mutex to allow concurrent removal of actors
+        inline static std::mutex mt;
+
 
         /**
          * Internally used to create a box actor of the given color.
@@ -274,7 +279,7 @@ namespace adekf::viz {
          * @param path the path to visualize
          * @param color of the line
          */
-        static void displayPath(const std::vector<Eigen::Vector3d> & path, const char *color);
+        static void displayPath(const std::vector<Eigen::Vector3d,Eigen::aligned_allocator<Eigen::Vector3d>> & path, const char *color);
 
 
         /**
@@ -283,7 +288,7 @@ namespace adekf::viz {
          * @param color of the line
          * @param sphere_radius radius of the displayed points
          */
-        static void displayPoints(const std::vector<Eigen::Vector3d> &  displayed_points,const char *color, double sphere_radius);
+        static vtkSmartPointer<vtkActor>  displayPoints(const std::vector<Eigen::Vector3d,Eigen::aligned_allocator<Eigen::Vector3d>> &  displayed_points,const char *color, double sphere_radius);
 
 
         /**
@@ -293,6 +298,12 @@ namespace adekf::viz {
          * @param radius  Radius of the bubble
          */
         static void addPositionBubble(const Eigen::Vector3d& position,const char* color, double radius);
+
+        /**
+         * Remove an actor from the visualization
+         * @param actor the actor to remove
+         */
+        static void removeActor(vtkSmartPointer<vtkActor> actor);
 
 
     };
