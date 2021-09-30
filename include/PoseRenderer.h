@@ -27,6 +27,8 @@
 #include <thread>
 #include <Eigen/Geometry>
 #include <mutex>
+#include <vtkSphereSource.h>
+#include <vtkGlyph3D.h>
 
 namespace adekf::viz {
     /**
@@ -227,6 +229,7 @@ namespace adekf::viz {
          */
          static void disposeWindow();
 
+
          /**
           * Display the estimated position of the given estimator as a box.
           *
@@ -236,10 +239,11 @@ namespace adekf::viz {
           * @tparam EstimatorType The type of the estimator
           * @param estimator The pointer to the estimator
           * @param color The color of the displayed box
+          * @param scale The scale of the actor box
           */
         template<class EstimatorType>
-        static void displayPosition(EstimatorType * estimator, const char * color){
-            displayPoseGeneric<EstimatorType,GenericPositionReader >(estimator,color);
+        static auto  displayPosition(EstimatorType * estimator, const char * color,double scale=1.){
+            return displayPoseGeneric<EstimatorType,GenericPositionReader >(estimator,color);
         }
 
         /**
@@ -251,10 +255,11 @@ namespace adekf::viz {
           * @tparam EstimatorType The type of the estimator
           * @param estimator The pointer to the estimator
           * @param color The color of the displayed box
+          * * @param scale The scale of the actor box
           */
         template<class EstimatorType>
-        static void displayPose(EstimatorType * estimator, const char * color){
-            displayPoseGeneric<EstimatorType,GenericPoseReader >(estimator,color);
+        static auto displayPose(EstimatorType * estimator, const char * color,double scale=1.){
+            return displayPoseGeneric<EstimatorType,GenericPoseReader >(estimator,color);
         }
 
         /**
@@ -267,20 +272,55 @@ namespace adekf::viz {
          * @tparam ReaderType The custom PoseReader type which implements how to read the pose from the given estimator
          * @param estimator The pointer to the estimator
          * @param color  The color of the displayed box
+         * @param scale The scale of the actor box
          */
         template<class EstimatorType, template <class> class ReaderType>
-        static void displayPoseGeneric(EstimatorType *estimator, const char * color) {
-            posesAndActors.push_back(std::make_pair<PoseReader *, vtkSmartPointer<vtkActor> >(new ReaderType<EstimatorType>(estimator),createActor(color)));
+        static std::pair<PoseReader *,vtkSmartPointer<vtkActor>  > displayPoseGeneric(EstimatorType *estimator, const char * color,double scale=1.) {
+            posesAndActors.push_back(std::make_pair<PoseReader *, vtkSmartPointer<vtkActor> >(new ReaderType<EstimatorType>(estimator),createActor(color,scale)));
+            return posesAndActors.back();
         }
-
-
         /**
          * Displays the given path with connected lines
          * @param path the path to visualize
          * @param color of the line
          */
         static void displayPath(const std::vector<Eigen::Vector3d,Eigen::aligned_allocator<Eigen::Vector3d>> & path, const char *color);
+/**
+         * Displays the given particles
+         * @param displayed_points The particles to display
+         * @param color of the line
+         * @param scale_factor scale factor of the displayed points
+         */
+        template<typename Iterable>
+        static vtkSmartPointer<vtkPoints> displayParticles(const Iterable &displayed_points,const char *color, double scale_factor) {
+            vtkSmartPointer<vtkPoints> points =
+                    vtkSmartPointer<vtkPoints>::New();
+            for(Eigen::Vector3d vector: displayed_points){
+                points->InsertNextPoint(vector.data());
+            }
+            vtkSmartPointer<vtkPolyData> polydata =
+                    vtkSmartPointer<vtkPolyData>::New();
+            polydata->SetPoints(points);
 
+            vtkSmartPointer<vtkGlyph3D> glyph3D =
+                    vtkSmartPointer<vtkGlyph3D>::New();
+            glyph3D->SetInputData(polydata);
+            glyph3D->Update();
+            glyph3D->SetScaleFactor(scale_factor);
+            // Visualize
+            vtkSmartPointer<vtkPolyDataMapper> mapper =
+                    vtkSmartPointer<vtkPolyDataMapper>::New();
+            mapper->SetInputConnection(glyph3D->GetOutputPort());
+
+            vtkSmartPointer<vtkActor> actor =
+                    vtkSmartPointer<vtkActor>::New();
+            actor->SetMapper(mapper);
+            vtkSmartPointer<vtkNamedColors> colors =
+                    vtkSmartPointer<vtkNamedColors>::New();
+            actor->GetProperty()->SetColor(colors->GetColor3d(color).GetData());
+            renderer->AddActor(actor);
+            return points;
+        }
 
         /**
          * Displays the given points
@@ -288,7 +328,42 @@ namespace adekf::viz {
          * @param color of the line
          * @param sphere_radius radius of the displayed points
          */
-        static vtkSmartPointer<vtkActor>  displayPoints(const std::vector<Eigen::Vector3d,Eigen::aligned_allocator<Eigen::Vector3d>> &  displayed_points,const char *color, double sphere_radius);
+        template<typename Iterable>
+        static vtkSmartPointer<vtkActor> displayPoints(const Iterable &displayed_points,const char *color, double sphere_radius) {
+            vtkSmartPointer<vtkPoints> points =
+                    vtkSmartPointer<vtkPoints>::New();
+            for(Eigen::Vector3d vector: displayed_points){
+                points->InsertNextPoint(vector.data());
+            }
+            vtkSmartPointer<vtkPolyData> polydata =
+                    vtkSmartPointer<vtkPolyData>::New();
+            polydata->SetPoints(points);
+
+            // Create anything you want here, we will use a cube for the demo.
+            vtkSmartPointer<vtkSphereSource> sphereSource =
+                    vtkSmartPointer<vtkSphereSource>::New();
+            sphereSource->SetRadius(sphere_radius);
+
+            vtkSmartPointer<vtkGlyph3D> glyph3D =
+                    vtkSmartPointer<vtkGlyph3D>::New();
+            glyph3D->SetSourceConnection(sphereSource->GetOutputPort());
+            glyph3D->SetInputData(polydata);
+            glyph3D->Update();
+
+            // Visualize
+            vtkSmartPointer<vtkPolyDataMapper> mapper =
+                    vtkSmartPointer<vtkPolyDataMapper>::New();
+            mapper->SetInputConnection(glyph3D->GetOutputPort());
+
+            vtkSmartPointer<vtkActor> actor =
+                    vtkSmartPointer<vtkActor>::New();
+            actor->SetMapper(mapper);
+            vtkSmartPointer<vtkNamedColors> colors =
+                    vtkSmartPointer<vtkNamedColors>::New();
+            actor->GetProperty()->SetColor(colors->GetColor3d(color).GetData());
+            renderer->AddActor(actor);
+            return actor;
+        }
 
 
 
@@ -298,13 +373,20 @@ namespace adekf::viz {
          * @param color  Color of the bubble
          * @param radius  Radius of the bubble
          */
-        static void addPositionBubble(const Eigen::Vector3d& position,const char* color, double radius);
+        static  vtkSmartPointer<vtkActor> addPositionBubble(const Eigen::Vector3d& position,const char* color, double radius);
 
         /**
          * Remove an actor from the visualization
          * @param actor the actor to remove
          */
         static void removeActor(vtkSmartPointer<vtkActor> actor);
+
+        /**
+         * @brief Removes all actors
+         * 
+         */
+        static void removeAllActors();
+
 
 
     };
