@@ -189,6 +189,7 @@ namespace adekf::viz
         void PoseRenderer::removeActor(const std::pair<PoseReader *,vtkSmartPointer<vtkActor>  > &actor){
             LOCK
             posesAndActors.remove(actor);
+            renderer->RemoveActor(actor.second);
         }
         void PoseRenderer::removeAllActors()
         {
