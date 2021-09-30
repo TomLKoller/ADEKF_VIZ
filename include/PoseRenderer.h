@@ -379,7 +379,9 @@ namespace adekf::viz {
          * Remove an actor from the visualization
          * @param actor the actor to remove
          */
-        static void removeActor(vtkSmartPointer<vtkActor> actor);
+        static void removeActor(const vtkSmartPointer<vtkActor> & actor);
+
+        static void removeActor(const std::pair<PoseReader *,vtkSmartPointer<vtkActor>  > &actor);
 
         /**
          * @brief Removes all actors

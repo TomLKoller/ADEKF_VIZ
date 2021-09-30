@@ -179,10 +179,16 @@ namespace adekf::viz
                 renderer->AddActor(actor);
         }
 
-        void PoseRenderer::removeActor(vtkSmartPointer<vtkActor> actor)
+        void PoseRenderer::removeActor(const vtkSmartPointer<vtkActor>& actor)
         {
                 LOCK
                     renderer->RemoveActor(actor);
+        }
+
+
+        void PoseRenderer::removeActor(const std::pair<PoseReader *,vtkSmartPointer<vtkActor>  > &actor){
+            LOCK
+            posesAndActors.remove(actor);
         }
         void PoseRenderer::removeAllActors()
         {
@@ -195,6 +201,7 @@ namespace adekf::viz
                         renderer->RemoveActor(actor);
                         actor = actors->GetNextActor();
                 } while (actor != NULL);
+                posesAndActors.clear();
         }
 
         template vtkSmartPointer<vtkActor>
