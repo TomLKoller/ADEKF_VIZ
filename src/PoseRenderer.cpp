@@ -194,15 +194,18 @@ namespace adekf::viz
         void PoseRenderer::removeAllActors()
         {
                 LOCK
+                
                 auto actors = renderer->GetActors();
                 auto lastActor = actors->GetLastActor();
                 auto actor = actors->GetNextActor();
-                do
+                while (actor != NULL)
                 {
+                        actor->SetVisibility(false);
                         renderer->RemoveActor(actor);
                         actor = actors->GetNextActor();
-                } while (actor != NULL);
-                posesAndActors.clear();
+
+                } 
+            posesAndActors.clear();
         }
 
         template vtkSmartPointer<vtkActor>
